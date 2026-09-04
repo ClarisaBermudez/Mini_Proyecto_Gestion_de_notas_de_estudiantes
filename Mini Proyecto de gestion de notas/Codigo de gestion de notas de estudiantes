@@ -1,0 +1,144 @@
+#Mini proyecto de gestion de notas
+# Lista para guardar los alumnos en memoria
+alumnos = []
+
+
+def registrar_estudiante():
+    print("\n--- Registro de Estudiante ---")
+    carnet = input("Ingrese el carnet: ").strip()
+
+    # Validar que no exista el carnet
+    for est in alumnos:
+        if est["carnet"] == carnet:
+            print("Ese carnet ya esta registrado.")
+            return
+
+    nombre = input("Ingrese el nombre completo: ").strip()
+    alumnos.append({"carnet": carnet, "nombre": nombre, "pila_notas": []})
+    print("Estudiante guardado correctamente.")
+
+
+def agregar_nota():
+    if not alumnos:
+        print("\nNo hay estudiantes registrados todavia.")
+        return
+
+    print("\nEstudiantes registrados:")
+    for est in alumnos:
+        print("Carnet:", est["carnet"], "| Nombre:", est["nombre"])
+
+    carnet = input("\nIngrese el carnet del alumno para agregar nota: ").strip()
+
+    for est in alumnos:
+        if est["carnet"] == carnet:
+            try:
+                nota = float(input("Ingrese la nota: "))
+                if nota < 0 or nota > 100:
+                    print("La nota debe estar entre 0 y 100.")
+                    return
+                # Insertamos la nota al final (comportamiento de Pila)
+                est["pila_notas"].append(nota)
+                print("Nota agregada con exito.")
+            except ValueError:
+                print("Error: Debe ingresar un numero valido.")
+            return
+
+    print("El carnet ingresado no existe en el sistema.")
+
+
+def eliminar_ultima_nota():
+    if not alumnos:
+        print("\nNo hay estudiantes registrados.")
+        return
+
+    carnet = input("\nIngrese el carnet del alumno: ").strip()
+
+    for est in alumnos:
+        if est["carnet"] == carnet:
+            pila = est["pila_notas"]
+            if not pila:
+                print("El alumno no tiene notas para eliminar.")
+                return
+
+            # Sacamos la ultima nota ingresada (POP)
+            nota_eliminada = pila.pop()
+            print("Se elimino la ultima nota ingresada:", nota_eliminada)
+            return
+
+    print("El carnet ingresado no existe en el sistema.")
+
+
+def mirar_registro_de_nota():
+    if not alumnos:
+        print("\nNo hay estudiantes registrados.")
+        return
+
+    print("\nEstudiantes registrados:")
+    print("-----------------------------------")
+    for est in alumnos:
+        print("Carnet:", est["carnet"], "| Nombre:", est["nombre"])
+    print("-----------------------------------")
+
+    carnet = input("Ingrese el carnet del alumno a consultar: ").strip()
+
+    for est in alumnos:
+        if est["carnet"] == carnet:
+            pila = est["pila_notas"]
+            if not pila:
+                print("El alumno", est["nombre"], "no tiene notas guardadas.")
+                return
+
+            print("\nNotas de:", est["nombre"], "[", est["carnet"], "]")
+            print("-----------------------------------")
+
+            # Muestra primero la ultima nota registrada
+            num_nota = len(pila)
+            for nota in reversed(pila):
+                if num_nota == len(pila):
+                    print("Nota", num_nota, ":", nota, "(Ultima ingresada)")
+                else:
+                    print("Nota", num_nota, ":", nota)
+                num_nota -= 1
+
+            # Calculo de la suma y promedio
+            suma_notas = 0
+            for n in pila:
+                suma_notas += n
+
+            promedio = suma_notas / len(pila)
+
+            print("-----------------------------------")
+            print("Total de notas:", len(pila))
+            print("Promedio actual:", round(promedio, 2))
+            return
+
+    print("El carnet ingresado no existe en el sistema")
+
+def menu_principal():
+    while True:
+        print("\n========== SISTEMA DE NOTAS ==========")
+        print("1. Registrar estudiante")
+        print("2. Agregar nota a estudiante")
+        print("3. Eliminar ultima nota (Deshacer)")
+        print("4. Consultar notas y promedio")
+        print("5. Salir")
+
+        opcion = input("Seleccione una opcion: ").strip()
+
+        if opcion == "1":
+            registrar_estudiante()
+        elif opcion == "2":
+            agregar_nota()
+        elif opcion == "3":
+            eliminar_ultima_nota()
+        elif opcion == "4":
+            mirar_registro_de_nota()
+        elif opcion == "5":
+            print("Cerrando el programa. Que tenga un buen dia.")
+            break
+        else:
+            print("Opcion invalida, intente de nuevo.")
+
+
+# Ejecucion del programa
+menu_principal()
